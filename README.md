@@ -4,6 +4,8 @@
 
 vim-xtract helps you split up large files into smaller files. Great for refactoring.
 
+![](docs/screencast.gif)
+
 ## Installation
 
 Add `rstacruz/vim-xtract` using your favorite Vim plugin manager. For [vim-plug](https://github.com/junegunn/vim-plug), that's:
