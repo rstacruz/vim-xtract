@@ -22,10 +22,14 @@ function! s:Xtract(bang, target, ...) range abort
   let last = a:lastline
   let head = get(a:, '1')
   let range = first.",".last
+  let ext = expand("%:e")
+  let fname = a:target
 
-  let ext = expand("%:e")        " js
+  if !empty(ext)
+    let fname .= '.'.ext
+  endif
+
   let path = expand("%:h")       " /path/to
-  let fname = a:target.".".ext   " target.js
   let fullpath = path."/".fname  " /path/to/target.js
 
   " Raise an error if invoked without a bang
