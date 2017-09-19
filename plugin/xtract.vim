@@ -3,6 +3,14 @@ if exists('g:loaded_xtract') || &cp || v:version < 700
 endif
 let g:loaded_xtract = 1
 
+" Placeholders
+let g:xtract_placeholders = {
+\ "javascript": "import %s from './%s'",
+\ "jsx": "import %s from './%s'",
+\ "scss": "@import './%s';",
+\ "sass": "@import './%s'",
+\ }
+
 " Extracts the current selection into a new file.
 "
 "     :6,8Xtract newfile
@@ -29,7 +37,7 @@ function! s:Xtract(bang,target) range abort
   silent exe range."yank"
 
   " Replace it
-  let placeholder = substitute(&commentstring, "%s", fname, "")
+  let placeholder = substitute(s:get_placeholder(), "%s", a:target, "g")
   silent exe "norm! :".first.",".last."change\<CR>".spaces.placeholder."\<CR>.\<CR>"
 
   " Open a new window and paste it in
@@ -46,6 +54,14 @@ function! s:Xtract(bang,target) range abort
   " Remove extra lines at the end of the file
   silent! '%s#\($\n\s*\)\+\%$##'
   silent 1
+endfunction
+
+function! s:get_placeholder()
+  if has_key(g:xtract_placeholders, &filetype)
+    return get(g:xtract_placeholders, &filetype)
+  else
+    return &commentstring
+  endif
 endfunction
 
 "

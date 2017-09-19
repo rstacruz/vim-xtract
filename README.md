@@ -24,6 +24,19 @@ Select a few lines. You can use a visual selection (<kbd>V</kbd>) or using text 
 
 This extracts from the current file into a new file `newfilename.js` in the same directory, keeping the extension of the current file.
 
+## Updating placeholders
+
+Edit `g:xtract_placeholders` to update the string it leaves behind:
+
+```js
+let g:xtract_placeholders = {
+\ "javascript": "import %s from './%s'",
+\ "jsx": "import %s from './%s'",
+\ "scss": "@import './%s';",
+\ "sass": "@import './%s'",
+\ }
+```
+
 ## Thanks
 
 **vim-xtract** © 2016+, Rico Sta. Cruz. Released under the [MIT] License.<br>
