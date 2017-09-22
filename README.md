@@ -24,6 +24,59 @@ Select a few lines. You can use a visual selection (<kbd>V</kbd>) or using text 
 
 This extracts from the current file into a new file `newfilename.js` in the same directory, keeping the extension of the current file.
 
+## Placeholders
+
+You can copy the files headers and leave an import statement behind (eg, `import X from './X'`).
+
+Let's say you have a file like this:
+
+```
+[index.js]
+ 1   // @flow
+ 2   import React from 'react'
+ 3
+ 4   export function App () {
+ 5     return <MyComponent />
+ 6   }
+ 7
+ 8   export function MyComponent () {
+ 9     return <div></div>
+10   }
+```
+
+Let's say we want to extract `MyComponent` into `MyComponent.js`. Select lines `8` to `10` using <kbd>V</kbd>, then type:
+
+```
+:Xtract MyComponent 3⏎
+```
+
+This copies lines 1-3 into a new buffer (the header) and 8-10 right after it (the block). The resulting files will look like this:
+
+```diff
+ [index.js]
+  // @flow
+  import React from 'react'
++ import MyComponent from './MyComponent'
+
+  export function App () {
+    return <MyComponent />
+  }
+-
+- export function MyComponent () {
+-   return <div></div>
+- }
+```
+
+```diff
+ [MyComponent.js]
++ // @flow
++ import React from 'react'
++
++ export function MyComponent () {
++   return <div></div>
++ }
+```
+
 ## Updating placeholders
 
 Edit `g:xtract_placeholders` to update the string it leaves behind:

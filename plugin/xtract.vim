@@ -15,36 +15,53 @@ let g:xtract_placeholders = {
 "
 "     :6,8Xtract newfile
 "
-command -range -bang -nargs=1 Xtract :<line1>,<line2>call s:Xtract(<bang>0,<f-args>)
+command -range -bang -nargs=* Xtract :<line1>,<line2>call s:Xtract(<bang>0,<f-args>)
 
-function! s:Xtract(bang,target) range abort
+function! s:Xtract(bang, target, ...) range abort
   let first = a:firstline
   let last = a:lastline
+  let head = get(a:, '1')
   let range = first.",".last
 
   let ext = expand("%:e")        " js
   let path = expand("%:h")       " /path/to
   let fname = a:target.".".ext   " target.js
   let fullpath = path."/".fname  " /path/to/target.js
-  let spaces = matchstr(getline(first),"^ *")
 
   " Raise an error if invoked without a bang
   if filereadable(fullpath) && !a:bang
     return s:error('E13: File exists (add ! to override): '.fullpath)
   endif
 
-  " Copy it
-  silent exe range."yank"
+  " Copy header (register 'x')
+  if head
+    silent exe "1," . head . "yank x"
+  endif
+
+  " Remove block (register default)
+  silent exe range."del"
+
+  " Remove extra lines at the end of the file (not working?)
+  silent! '%s#\($\n\s*\)\+\%$##'
 
   " Replace it
   let placeholder = substitute(s:get_placeholder(), "%s", a:target, "g")
-  silent exe "norm! :".first.",".last."change\<CR>".spaces.placeholder."\<CR>.\<CR>"
 
-  " Open a new window and paste it in
+  if head
+      let spaces = matchstr(getline(head - 1),"^ *")
+
+    " Go to where the head is and insert the placeholder
+    silent exe "norm! :".head."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
+  endif
+
+  " Open a new window and paste the block in
   silent execute "split ".fullpath
   silent put
   silent 1
   silent normal '"_dd'
+  if head
+    silent put! x
+  endif
 
   " mkdir -p
   if !isdirectory(fnamemodify(fullpath, ':h'))
