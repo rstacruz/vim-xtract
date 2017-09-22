@@ -38,7 +38,7 @@ You can copy the files headers and leave an import statement behind (eg, `import
 
 #### Example
 
-Let's say you have a file like this. We want to copy the header (first 3 lines) and a function body (last 3 lines). The format is:
+Let's say you have a file like this `index.js` below. We want to extract the header (first 3 lines) and a function body (last 3 lines) into a new file, `MyComponent.js`.
 
 ```
 [index.js]
