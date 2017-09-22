@@ -54,7 +54,7 @@ Let's say you have a file like this `index.js` below. We want to extract the hea
 10   }
 ```
 
-We want to extract `MyComponent` into `MyComponent.js`. Select the body first (lines `8` to `10`) using <kbd>V</kbd>, then type:
+Select the body first (lines `8` to `10`) using <kbd>V</kbd>, then type:
 
 ```
 :Xtract MyComponent 3⏎
