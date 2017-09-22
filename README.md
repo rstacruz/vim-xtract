@@ -33,8 +33,8 @@ You can copy the files headers and leave an import statement behind (eg, `import
 ```
 
 - `'<,'>` — the range of the body
-- `FILENAME` — the new file
-- `N` — number of lines in the header
+- `FILENAME` — the new file (no extension)
+- `N` — number of lines in the header (optional)
 
 #### Example
 
@@ -60,7 +60,7 @@ We want to extract `MyComponent` into `MyComponent.js`. Select the body first (l
 :Xtract MyComponent 3⏎
 ```
 
-This copies lines 1-3 into a new buffer (the header) and 8-10 right after it (the block). The resulting files will look like this:
+This copies lines 1-3 into a new buffer (the header) and 8-10 right after it (the block). The resulting files will look like these:
 
 ```diff
  [index.js]
