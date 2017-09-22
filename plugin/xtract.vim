@@ -48,7 +48,7 @@ function! s:Xtract(bang, target, ...) range abort
   let placeholder = substitute(s:get_placeholder(), "%s", a:target, "g")
 
   if head
-      let spaces = matchstr(getline(head - 1),"^ *")
+    let spaces = matchstr(getline(head - 1),"^ *")
 
     " Go to where the head is and insert the placeholder
     silent exe "norm! :".head."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
@@ -59,6 +59,8 @@ function! s:Xtract(bang, target, ...) range abort
   silent put
   silent 1
   silent normal '"_dd'
+
+  " Paste the head in, if it's available
   if head
     silent put! x
   endif

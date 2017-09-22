@@ -24,11 +24,21 @@ Select a few lines. You can use a visual selection (<kbd>V</kbd>) or using text 
 
 This extracts from the current file into a new file `newfilename.js` in the same directory, keeping the extension of the current file.
 
-## Placeholders
+## Copying headers
 
 You can copy the files headers and leave an import statement behind (eg, `import X from './X'`).
 
-Let's say you have a file like this:
+```
+:'<,'>Xtract FILENAME N
+```
+
+- `'<,'>` — the range of the body
+- `FILENAME` — the new file
+- `N` — number of lines in the header
+
+#### Example
+
+Let's say you have a file like this. We want to copy the header (first 3 lines) and a function body (last 3 lines). The format is:
 
 ```
 [index.js]
@@ -44,7 +54,7 @@ Let's say you have a file like this:
 10   }
 ```
 
-Let's say we want to extract `MyComponent` into `MyComponent.js`. Select lines `8` to `10` using <kbd>V</kbd>, then type:
+We want to extract `MyComponent` into `MyComponent.js`. Select the body first (lines `8` to `10`) using <kbd>V</kbd>, then type:
 
 ```
 :Xtract MyComponent 3⏎
