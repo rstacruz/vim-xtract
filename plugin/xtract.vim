@@ -22,19 +22,24 @@ function! s:Xtract(bang, target, ...) range abort
   let last = a:lastline
   let head = get(a:, '1')
   let range = first.",".last
-  let ext = expand("%:e")
-  let fname = a:target
+  let target = a:target
+  let extension = expand("%:e")
 
-  if !empty(ext)
-    let fname .= '.'.ext
+  " If current file has an extension, append it
+  if !empty(extension)
+    let target .= '.'.extension
   endif
 
-  let path = expand("%:h")       " /path/to
-  let fullpath = path."/".fname  " /path/to/target.js
+  " Build the full target path
+  if target[0] == '~' && target[1] == '/'
+    let target = expand(target)
+  elseif target[0] != '/'
+    let target = expand("%:h").'/'.target
+  endif
 
   " Raise an error if invoked without a bang
-  if filereadable(fullpath) && !a:bang
-    return s:error('E13: File exists (add ! to override): '.fullpath)
+  if filereadable(target) && !a:bang
+    return s:error('E13: File exists (add ! to override): '.target)
   endif
 
   " Copy header (register 'x')
@@ -59,7 +64,7 @@ function! s:Xtract(bang, target, ...) range abort
   endif
 
   " Open a new window and paste the block in
-  silent execute "split ".fullpath
+  silent execute "split ".target
   silent put
   silent 1
   silent normal '"_dd'
@@ -70,8 +75,8 @@ function! s:Xtract(bang, target, ...) range abort
   endif
 
   " mkdir -p
-  if !isdirectory(fnamemodify(fullpath, ':h'))
-    call mkdir(fnamemodify(fullpath, ':h'), 'p')
+  if !isdirectory(fnamemodify(target, ':h'))
+    call mkdir(fnamemodify(target, ':h'), 'p')
   endif
 
   " Remove extra lines at the end of the file
