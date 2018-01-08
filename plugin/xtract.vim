@@ -25,8 +25,8 @@ function! s:Xtract(bang, target, ...) range abort
   let target = a:target
   let extension = expand("%:e")
 
-  " If current file has an extension, append it
-  if !empty(extension)
+  " If current file has an extension and the target doesn't already have it, append it
+  if !empty(extension) && !s:path_has_extension(target, extension)
     let target .= '.'.extension
   endif
 
@@ -87,6 +87,10 @@ function! s:Xtract(bang, target, ...) range abort
   " Remove extra lines at the end of the file
   silent! '%s#\($\n\s*\)\+\%$##'
   silent 1
+endfunction
+
+function! s:path_has_extension(path, ext)
+  return strcharpart(a:path, strchars(a:path) - (strchars(a:ext) + 1), strchars(a:ext) + 1) == ".".a:ext
 endfunction
 
 function! s:get_placeholder()
