@@ -22,15 +22,24 @@ function! s:Xtract(bang, target, ...) range abort
   let last = a:lastline
   let head = get(a:, '1')
   let range = first.",".last
+  let target = a:target
+  let extension = expand("%:e")
 
-  let ext = expand("%:e")        " js
-  let path = expand("%:h")       " /path/to
-  let fname = a:target.".".ext   " target.js
-  let fullpath = path."/".fname  " /path/to/target.js
+  " If current file has an extension and the target doesn't already have it, append it
+  if !empty(extension) && !s:path_has_extension(target, extension)
+    let target .= '.'.extension
+  endif
+
+  " Build the full target path
+  if target[0] == '~' && target[1] == '/'
+    let target = expand(target)
+  elseif target[0] != '/'
+    let target = expand("%:h").'/'.target
+  endif
 
   " Raise an error if invoked without a bang
-  if filereadable(fullpath) && !a:bang
-    return s:error('E13: File exists (add ! to override): '.fullpath)
+  if filereadable(target) && !a:bang
+    return s:error('E13: File exists (add ! to override): '.target)
   endif
 
   " Copy header (register 'x')
@@ -44,18 +53,23 @@ function! s:Xtract(bang, target, ...) range abort
   " Remove extra lines at the end of the file (not working?)
   silent! '%s#\($\n\s*\)\+\%$##'
 
-  " Replace it
-  let placeholder = substitute(s:get_placeholder(), "%s", a:target, "g")
-
+  " Insert the placeholder
   if head
     let spaces = matchstr(getline(head - 1),"^ *")
+    let placeholder = substitute(s:get_placeholder(), "%s", a:target, "g")
 
     " Go to where the head is and insert the placeholder
     silent exe "norm! :".head."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
+  else
+    let spaces = matchstr(getline(first),"^ *")
+    let placeholder = substitute(&commentstring, "%s", " ".target, "")
+
+    " Insert the placeholder where the text was extracted
+    silent exe "norm! :".first."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
   endif
 
   " Open a new window and paste the block in
-  silent execute "split ".fullpath
+  silent execute "split ".target
   silent put
   silent 1
   silent normal '"_dd'
@@ -66,13 +80,17 @@ function! s:Xtract(bang, target, ...) range abort
   endif
 
   " mkdir -p
-  if !isdirectory(fnamemodify(fullpath, ':h'))
-    call mkdir(fnamemodify(fullpath, ':h'), 'p')
+  if !isdirectory(fnamemodify(target, ':h'))
+    call mkdir(fnamemodify(target, ':h'), 'p')
   endif
 
   " Remove extra lines at the end of the file
   silent! '%s#\($\n\s*\)\+\%$##'
   silent 1
+endfunction
+
+function! s:path_has_extension(path, ext)
+  return strcharpart(a:path, strchars(a:path) - (strchars(a:ext) + 1), strchars(a:ext) + 1) == ".".a:ext
 endfunction
 
 function! s:get_placeholder()
