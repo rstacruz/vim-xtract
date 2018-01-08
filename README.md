@@ -26,7 +26,7 @@ This extracts from the current file into a new file `newfilename.js` in the same
 
 ## Copying headers
 
-You can copy the files headers and leave an import statement behind (eg, `import X from './X'`).
+You can copy the file's headers and leave an import statement behind (eg, `import X from './X'`).
 
 ```
 :'<,'>Xtract FILENAME N

@@ -53,14 +53,19 @@ function! s:Xtract(bang, target, ...) range abort
   " Remove extra lines at the end of the file (not working?)
   silent! '%s#\($\n\s*\)\+\%$##'
 
-  " Replace it
-  let placeholder = substitute(s:get_placeholder(), "%s", a:target, "g")
-
+  " Insert the placeholder
   if head
     let spaces = matchstr(getline(head - 1),"^ *")
+    let placeholder = substitute(s:get_placeholder(), "%s", a:target, "g")
 
     " Go to where the head is and insert the placeholder
     silent exe "norm! :".head."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
+  else
+    let spaces = matchstr(getline(first),"^ *")
+    let placeholder = substitute(&commentstring, "%s", " ".target, "")
+
+    " Insert the placeholder where the text was extracted
+    silent exe "norm! :".first."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
   endif
 
   " Open a new window and paste the block in
