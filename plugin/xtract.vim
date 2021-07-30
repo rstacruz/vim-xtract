@@ -18,10 +18,7 @@ let g:xtract_placeholders = {
 command -range -bang -nargs=* Xtract :<line1>,<line2>call s:Xtract(<bang>0,<f-args>)
 
 function! s:Xtract(bang, target, ...) range abort
-  let first = a:firstline
-  let last = a:lastline
   let head = get(a:, '1')
-  let range = first.",".last
   let target = a:target
   let extension = expand("%:e")
 
@@ -44,11 +41,11 @@ function! s:Xtract(bang, target, ...) range abort
 
   " Copy header (register 'x')
   if head
-    silent exe "1," . head . "yank x"
+    silent exe "1,".head."yank x"
   endif
 
-  " Remove block (register default)
-  silent exe range."del"
+  " Remove block (default register)
+  silent exe a:firstline.",".a:lastline."del"
 
   " Remove extra lines at the end of the file (not working?)
   silent! '%s#\($\n\s*\)\+\%$##'
@@ -61,11 +58,11 @@ function! s:Xtract(bang, target, ...) range abort
     " Go to where the head is and insert the placeholder
     silent exe "norm! :".head."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
   else
-    let spaces = matchstr(getline(first),"^ *")
+    let spaces = matchstr(getline(a:firstline),"^ *")
     let placeholder = substitute(&commentstring, "%s", " ".target, "")
 
     " Insert the placeholder where the text was extracted
-    silent exe "norm! :".first."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
+    silent exe "norm! :".a:firstline."insert\<CR>".spaces.placeholder."\<CR>.\<CR>"
   endif
 
   " Open a new window and paste the block in
