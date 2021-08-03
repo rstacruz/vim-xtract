@@ -32,8 +32,8 @@ function! s:Xtract(bang, target, ...) range abort
     let target .= '.'.extension
   endif
 
-  " Build the full target path
-  if target[0] == '~' && target[1] == '/'
+  " Expand the full target path
+  if target[:1] == '~/'
     let target = expand(target)
   elseif target[0] != '/'
     let target = expand("%:h").'/'.target
@@ -49,7 +49,7 @@ function! s:Xtract(bang, target, ...) range abort
     silent exe "1,".header."yank x"
   endif
 
-  " Remove block (default register)
+  " Remove block (use default register)
   silent exe a:firstline.",".a:lastline."del"
 
   " Keep track of the original line where the content was extracted from
@@ -78,17 +78,16 @@ function! s:Xtract(bang, target, ...) range abort
   let placeholder = s:comment(&commentstring, target)
 
   " Insert the placeholder where the text was removed
-  silent exe "norm! :".(origline)."insert\<CR>".indent.placeholder."\<CR>.\<CR>"
+  silent exe "norm! :".origline."insert\<CR>".indent.placeholder."\<CR>.\<CR>"
 
-  " Open a new window and paste the block in
-  silent execute "split ".target
+  " Open a new window and paste the extracted block in
+  silent exe "split ".target
   silent put
 
-  " Delete the empty line at the top of the file (without changing a register)
-  silent 1
-  silent normal '"_dd'
+  " Delete the empty line at the top of the file (without taking a register)
+  silent 1delete _
 
-  " Paste the header in (if specified)
+  " Insert the header (if specified) at the top
   if header
     silent put! x
   endif
