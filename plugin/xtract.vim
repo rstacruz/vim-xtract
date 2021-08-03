@@ -25,7 +25,7 @@ function! s:Xtract(bang, target, ...) range abort
   let header = get(a:, '1')
   let target = a:target
   let extension = expand("%:e")
-  let indent = s:get_indent(a:firstline)
+  let indent = s:get_indent_at(a:firstline)
 
   " If current file has an extension and the target doesn't already have it, append it
   if !empty(extension) && !s:path_has_extension(target, extension)
@@ -64,7 +64,7 @@ function! s:Xtract(bang, target, ...) range abort
       let import = substitute(import, "%s", a:target, "g")
 
       " Capture the indent present on the next-to-last line of the header
-      let header_indent = s:get_indent(header - 1)
+      let header_indent = s:get_indent_at(header - 1)
 
       " Append the import statement to the header
       silent exe "norm! :".header."insert\<CR>".header_indent.import."\<CR>.\<CR>"
@@ -78,7 +78,7 @@ function! s:Xtract(bang, target, ...) range abort
   let placeholder = s:comment(&commentstring, target)
 
   " Insert the placeholder where the text was removed
-  silent exe "norm! :".origline."insert\<CR>".indent.placeholder."\<CR>.\<CR>"
+  silent exe "norm! :".origline."insert\<CR>\<C-u>".indent.placeholder."\<CR>.\<CR>"
 
   " Open a new window and paste the extracted block in
   silent exe "split ".target
@@ -105,8 +105,8 @@ function! s:path_has_extension(path, ext)
   return strcharpart(a:path, strchars(a:path) - (strchars(a:ext) + 1), strchars(a:ext) + 1) == ".".a:ext
 endfunction
 
-function! s:get_indent(line)
-  return matchstr(getline(a:line), "^ *")
+function! s:get_indent_at(line)
+  return matchstr(getline(a:line), "^[ \t]*")
 endfunction
 
 function! s:get_importstring()
