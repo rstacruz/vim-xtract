@@ -26,7 +26,7 @@ This extracts from the current file into a new file `newfilename.js` in the same
 
 ## Copying headers
 
-You can copy the file's headers and leave an import statement behind (eg, `import X from './X'`).
+You can copy the file's headers and automatically add an import statement to the original file (eg, `import X from './X'`):
 
 ```
 :'<,'>Xtract FILENAME N
@@ -87,12 +87,12 @@ This copies lines 1-3 into a new buffer (the header) and 8-10 right after it (th
 + }
 ```
 
-## Updating placeholders
+## Updating import strings
 
-Edit `g:xtract_placeholders` to update the string it leaves behind:
+Edit the `g:xtract_importstrings` dictionary to change the import statement that is added to the header in the original file:
 
 ```js
-let g:xtract_placeholders = {
+let g:xtract_importstrings = {
 \ "javascript": "import %s from './%s'",
 \ "jsx": "import %s from './%s'",
 \ "scss": "@import './%s';",

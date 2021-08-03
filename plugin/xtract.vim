@@ -3,8 +3,8 @@ if exists('g:loaded_xtract') || &cp || v:version < 700
 endif
 let g:loaded_xtract = 1
 
-" Placeholders
-let g:xtract_placeholders = {
+" Import strings
+let g:xtract_importstrings = {
 \ "javascript": "import %s from './%s'",
 \ "jsx": "import %s from './%s'",
 \ "scss": "@import './%s';",
@@ -58,7 +58,7 @@ function! s:Xtract(bang, target, ...) range abort
   " Insert import statement right after the header (if header was specified
   " and we have an appropriate import template)
   if header
-    let import = s:get_placeholder()
+    let import = s:get_importstring()
 
     if import != -1
       let import = substitute(import, "%s", a:target, "g")
@@ -110,8 +110,8 @@ function! s:get_indent(line)
   return matchstr(getline(a:line), "^ *")
 endfunction
 
-function! s:get_placeholder()
-  return get(g:xtract_placeholders, &filetype, -1)
+function! s:get_importstring()
+  return get(g:xtract_importstrings, &filetype, -1)
 endfunction
 
 "
