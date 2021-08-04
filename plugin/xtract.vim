@@ -80,12 +80,9 @@ function! s:Xtract(bang, target, ...) range abort
   " Insert the placeholder where the text was removed
   silent exe "norm! :".origline."insert\<CR>\<C-u>".indent.placeholder."\<CR>.\<CR>"
 
-  " Open a new window and paste the extracted block in
-  silent exe "split ".target
-  silent put
-
-  " Delete the empty line at the top of the file (without taking a register)
-  silent 1delete _
+  " Open target buffer and paste the extracted block at the end
+  call s:open_buffer(target)
+  call s:paste_append()
 
   " Insert the header (if specified) at the top
   if header
@@ -99,6 +96,34 @@ function! s:Xtract(bang, target, ...) range abort
 
   " Put the cursor at the top of the new buffer
   silent 1
+endfunction
+
+" Open buffer in a split window or focus it if it's already open
+function! s:open_buffer(name)
+  let bufinfo = getbufinfo(a:name)
+
+  if len(bufinfo) > 0
+    let bufinfo = bufinfo[0]
+
+    if len(bufinfo.windows) > 0
+      call win_gotoid(bufinfo.windows[0])
+      return
+    endif
+  endif
+
+  silent exe "split ".a:name
+endfunction
+
+function! s:paste_append()
+  let bufwasempty = line('$') == 1 && getline(1) == ''
+
+  " Paste at the end of the buffer
+  silent $put
+
+  " If the buffer was empty, delete the residual empty line at the top of the buffer (without taking a register)
+  if bufwasempty
+    silent 1delete _
+  endif
 endfunction
 
 function! s:path_has_extension(path, ext)
