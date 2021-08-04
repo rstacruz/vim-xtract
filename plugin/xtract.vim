@@ -29,7 +29,7 @@ function! s:Xtract(bang, target, ...) range abort
   if target[:1] == '~/'
     let target = expand(target)
   elseif target[0] != '/'
-    let target = expand("%:h").'/'.target
+    let target = expand('%:h').'/'.target
   endif
 
   " Raise an error if target file exists and this was invoked without a bang
@@ -39,14 +39,14 @@ function! s:Xtract(bang, target, ...) range abort
 
   " Copy header (register 'x')
   if headersize
-    silent exe "1,".headersize."yank x"
+    silent exe '1,'.headersize.'yank x'
   endif
 
   " Capture the indent of the first selected line before the selected lines are removed
   let indent = s:get_indent_at(a:firstline)
 
   " Remove block (use default register)
-  silent exe a:firstline.",".a:lastline."del"
+  silent exe a:firstline.','.a:lastline.'del'
 
   " Keep track of the original line where the content was extracted from
   let origline = a:firstline
@@ -57,13 +57,13 @@ function! s:Xtract(bang, target, ...) range abort
     let import = s:get_importstring()
 
     if import != -1
-      let import = substitute(import, "%s", a:target, "g")
+      let import = substitute(import, '%s', a:target, 'g')
 
       " Capture the indent present on the next-to-last line of the header
       let header_indent = s:get_indent_at(headersize - 1)
 
       " Append the import statement to the header
-      silent exe "norm! :".headersize."insert\<CR>".header_indent.import."\<CR>.\<CR>"
+      silent exe 'norm! :'.headersize."insert\<CR>".header_indent.import."\<CR>.\<CR>"
 
       " Advance the original line reference due to the paste
       let origline += 1
@@ -73,8 +73,8 @@ function! s:Xtract(bang, target, ...) range abort
   " Build a placeholder comment that refers to the new file that was created
   let placeholder = s:comment(&commentstring, target)
 
-  " Insert the placeholder where the text was removed
-  silent exe "norm! :".origline."insert\<CR>\<C-u>".indent.placeholder."\<CR>.\<CR>"
+  " Insert a placeholder comment where the text was removed
+  silent exe 'norm! :'.origline."insert\<CR>\<C-u>".indent.placeholder."\<CR>.\<CR>"
 
   " Open target buffer and paste the extracted block at the end
   call s:open_buffer(target)
@@ -107,7 +107,7 @@ function! s:open_buffer(name)
     endif
   endif
 
-  silent exe "split ".a:name
+  silent exe 'split '.a:name
 endfunction
 
 function! s:paste_append()
