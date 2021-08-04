@@ -16,25 +16,25 @@ Plug 'rstacruz/vim-xtract'
 
 ## Usage
 
-Select a few lines. You can use a visual selection (<kbd>V</kbd>) or using text objects (<kbd>v</kbd><kbd>ap</kbd><kbd>ap</kbd>...). Then press:
+Select lines using visual selection (<kbd>V</kbd>) or using text objects (<kbd>v</kbd><kbd>ap</kbd><kbd>ap</kbd>...). Then type:
 
 ```
 :Xtract newfilename⏎
 ```
 
-This extracts from the current file into a new file `newfilename.js` in the same directory, keeping the extension of the current file.
+This extracts the selected lines from the current file into a new file (e.g. `newfilename.js`) in the same directory. The extension of the new file will be the same as the original.
 
 ## Copying headers
 
 You can copy the file's headers and automatically add an import statement to the original file (eg, `import X from './X'`):
 
 ```
-:'<,'>Xtract FILENAME N
+:'<,'>Xtract FILENAME HEADERSIZE
 ```
 
 - `'<,'>` — the range of the body
 - `FILENAME` — the new file (no extension)
-- `N` — number of lines in the header (optional)
+- `HEADERSIZE` — number of lines in the header (optional)
 
 #### Example
 
@@ -54,13 +54,13 @@ Let's say you have a file like this `index.js` below. We want to extract the hea
 10   }
 ```
 
-Select the body first (lines `8` to `10`) using <kbd>V</kbd>, then type:
+Select lines (e.g. lines `8` to `10`) using visual mode (<kbd>V</kbd>), then type:
 
 ```
 :Xtract MyComponent 3⏎
 ```
 
-This copies lines 1-3 into a new buffer (the header) and 8-10 right after it (the block). The resulting files will look like these:
+This copies the header (lines 1-3) and pastes the selected block right after it into a new file buffer. The import statement referencing the new file will be inserted right before the last line of the header in the original file. The resulting files will look like these:
 
 ```diff
  [index.js]
@@ -71,10 +71,11 @@ This copies lines 1-3 into a new buffer (the header) and 8-10 right after it (th
   export function App () {
     return <MyComponent />
   }
--
+
 - export function MyComponent () {
 -   return <div></div>
 - }
++ /* ./MyComponent.js */
 ```
 
 ```diff
@@ -89,7 +90,7 @@ This copies lines 1-3 into a new buffer (the header) and 8-10 right after it (th
 
 ## Updating import strings
 
-Edit the `g:xtract_importstrings` dictionary to change the import statement that is added to the header in the original file:
+Define your own `g:xtract_importstrings` dictionary to change the import statement that is added to the header in the original file:
 
 ```js
 let g:xtract_importstrings = {

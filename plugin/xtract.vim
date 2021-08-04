@@ -13,7 +13,7 @@ let g:xtract_importstrings = {
 
 " Extracts the current selection into a new file.
 "
-"     :<range>Xtract <newfile> <header: optional>
+"     :<range>Xtract <newfile> <headersize: optional>
 "
 " For example:
 "
@@ -22,7 +22,7 @@ let g:xtract_importstrings = {
 command -range -bang -nargs=* Xtract :<line1>,<line2>call s:Xtract(<bang>0,<f-args>)
 
 function! s:Xtract(bang, target, ...) range abort
-  let header = get(a:, '1')
+  let headersize = get(a:, '1')
   let target = a:target
   let extension = expand("%:e")
   let indent = s:get_indent_at(a:firstline)
@@ -45,8 +45,8 @@ function! s:Xtract(bang, target, ...) range abort
   endif
 
   " Copy header (register 'x')
-  if header
-    silent exe "1,".header."yank x"
+  if headersize
+    silent exe "1,".headersize."yank x"
   endif
 
   " Remove block (use default register)
@@ -55,19 +55,19 @@ function! s:Xtract(bang, target, ...) range abort
   " Keep track of the original line where the content was extracted from
   let origline = a:firstline
 
-  " Insert import statement right after the header (if header was specified
+  " Insert import statement at the end of the header (if headersize was specified
   " and we have an appropriate import template)
-  if header
+  if headersize
     let import = s:get_importstring()
 
     if import != -1
       let import = substitute(import, "%s", a:target, "g")
 
       " Capture the indent present on the next-to-last line of the header
-      let header_indent = s:get_indent_at(header - 1)
+      let header_indent = s:get_indent_at(headersize - 1)
 
       " Append the import statement to the header
-      silent exe "norm! :".header."insert\<CR>".header_indent.import."\<CR>.\<CR>"
+      silent exe "norm! :".headersize."insert\<CR>".header_indent.import."\<CR>.\<CR>"
 
       " Advance the original line reference due to the paste
       let origline += 1
@@ -84,8 +84,8 @@ function! s:Xtract(bang, target, ...) range abort
   call s:open_buffer(target)
   call s:paste_append()
 
-  " Insert the header (if specified) at the top
-  if header
+  " Insert the header (if headersize specified) at the top
+  if headersize
     silent put! x
   endif
 
