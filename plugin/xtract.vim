@@ -73,9 +73,8 @@ function! s:Xtract(bang, target, ...) range abort
   " Insert a placeholder comment where the text was removed
   call append(origline - 1, indent.placeholder)
 
-  " Place the cursor and center the view on the line with the placeholder comment
+  " Place the cursor on the line with the placeholder comment
   silent exe origline.'|'
-  silent exe 'norm! z.'
 
   " Open target buffer and paste the extracted block at the end
   call s:open_buffer(target)
@@ -93,6 +92,11 @@ function! s:Xtract(bang, target, ...) range abort
 
   " Put the cursor at the top of the new buffer
   silent 1
+
+  " Briefly switch to the original window to center the view
+  call win_gotoid(win_getid(winnr('#')))
+  silent exe 'norm! z.'
+  call win_gotoid(win_getid(winnr('#')))
 
   " Output message
   let numlines = a:lastline - a:firstline + 1
