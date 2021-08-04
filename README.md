@@ -24,6 +24,8 @@ Select lines using visual selection (<kbd>V</kbd>) or using text objects (<kbd>v
 
 This extracts the selected lines from the current file into a new file (e.g. `newfilename.js`) in the same directory. If the new file doesn't have an extension, it will automatically be the same as the original.
 
+If the destination directory doesn't exist, it will automatically be created.
+
 ## Copying headers
 
 You can copy the file's headers and automatically add an import statement to the original file (eg, `import X from './X'`):
