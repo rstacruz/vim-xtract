@@ -94,9 +94,9 @@ function! s:Xtract(bang, target, ...) range abort
   silent 1
 
   " Briefly switch to the original window to center the view
-  call win_gotoid(win_getid(winnr('#')))
+  noautocmd wincmd p
   silent exe 'norm! z.'
-  call win_gotoid(win_getid(winnr('#')))
+  noautocmd wincmd p
 
   " Output message
   let numlines = a:lastline - a:firstline + 1
