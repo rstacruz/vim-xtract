@@ -73,6 +73,10 @@ function! s:Xtract(bang, target, ...) range abort
   " Insert a placeholder comment where the text was removed
   call append(origline - 1, indent.placeholder)
 
+  " Place the cursor and center the view on the line with the placeholder comment
+  silent exe origline.'|'
+  silent exe 'norm! z.'
+
   " Open target buffer and paste the extracted block at the end
   call s:open_buffer(target)
   call s:paste_append()
