@@ -124,7 +124,7 @@ function! s:add_default_extension(path, ext)
 endfunction
 
 function! s:get_indent_at(line)
-  return matchstr(getline(a:line), "^[ \t]*")
+  return matchstr(getline(a:line), '^\s*')
 endfunction
 
 function! s:get_importstring()
