@@ -93,6 +93,11 @@ function! s:Xtract(bang, target, ...) range abort
 
   " Put the cursor at the top of the new buffer
   silent 1
+
+  " Output message
+  let numlines = a:lastline - a:firstline + 1
+  redraw
+  echomsg numlines.' line'.(numlines == 1 ? '' : 's').' extracted to file: '.target
 endfunction
 
 " Open buffer in a split window or focus it if it's already open
