@@ -59,11 +59,8 @@ function! s:Xtract(bang, target, ...) range abort
     if import != -1
       let import = substitute(import, '%s', a:target, 'g')
 
-      " Capture the indent present on the next-to-last line of the header
-      let header_indent = s:get_indent_at(headersize - 1)
-
-      " Append the import statement to the header
-      silent exe 'norm! :'.headersize."insert\<CR>".header_indent.import."\<CR>.\<CR>"
+      " Insert the import statement
+      call append(headersize - 1, s:get_indent_at(headersize - 1).import)
 
       " Advance the original line reference due to the paste
       let origline += 1
@@ -74,7 +71,7 @@ function! s:Xtract(bang, target, ...) range abort
   let placeholder = s:comment(&commentstring, target)
 
   " Insert a placeholder comment where the text was removed
-  silent exe 'norm! :'.origline."insert\<CR>\<C-u>".indent.placeholder."\<CR>.\<CR>"
+  call append(origline - 1, indent.placeholder)
 
   " Open target buffer and paste the extracted block at the end
   call s:open_buffer(target)
