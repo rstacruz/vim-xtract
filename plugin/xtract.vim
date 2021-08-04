@@ -23,14 +23,7 @@ command -range -bang -nargs=* Xtract :<line1>,<line2>call s:Xtract(<bang>0,<f-ar
 
 function! s:Xtract(bang, target, ...) range abort
   let headersize = get(a:, '1')
-  let target = a:target
-  let extension = expand("%:e")
-  let indent = s:get_indent_at(a:firstline)
-
-  " If current file has an extension and the target doesn't already have it, append it
-  if !empty(extension) && !s:path_has_extension(target, extension)
-    let target .= '.'.extension
-  endif
+  let target = s:add_default_extension(a:target, expand('%:e'))
 
   " Expand the full target path
   if target[:1] == '~/'
@@ -48,6 +41,9 @@ function! s:Xtract(bang, target, ...) range abort
   if headersize
     silent exe "1,".headersize."yank x"
   endif
+
+  " Capture the indent of the first selected line before the selected lines are removed
+  let indent = s:get_indent_at(a:firstline)
 
   " Remove block (use default register)
   silent exe a:firstline.",".a:lastline."del"
@@ -89,7 +85,7 @@ function! s:Xtract(bang, target, ...) range abort
     silent put! x
   endif
 
-  " Ensure the target directory exists
+  " Create the target directory if it doesn't already exist
   if !isdirectory(fnamemodify(target, ':h'))
     call mkdir(fnamemodify(target, ':h'), 'p')
   endif
@@ -126,8 +122,8 @@ function! s:paste_append()
   endif
 endfunction
 
-function! s:path_has_extension(path, ext)
-  return strcharpart(a:path, strchars(a:path) - (strchars(a:ext) + 1), strchars(a:ext) + 1) == ".".a:ext
+function! s:add_default_extension(path, ext)
+  return a:ext != '' && fnamemodify(a:path, ':e') == '' ? a:path.'.'.a:ext : a:path
 endfunction
 
 function! s:get_indent_at(line)

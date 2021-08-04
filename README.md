@@ -22,7 +22,7 @@ Select lines using visual selection (<kbd>V</kbd>) or using text objects (<kbd>v
 :Xtract newfilename⏎
 ```
 
-This extracts the selected lines from the current file into a new file (e.g. `newfilename.js`) in the same directory. The extension of the new file will be the same as the original.
+This extracts the selected lines from the current file into a new file (e.g. `newfilename.js`) in the same directory. If the new file doesn't have an extension, it will automatically be the same as the original.
 
 ## Copying headers
 
@@ -33,7 +33,7 @@ You can copy the file's headers and automatically add an import statement to the
 ```
 
 - `'<,'>` — the range of the body
-- `FILENAME` — the new file (no extension)
+- `FILENAME` — the new file (extension may be omitted)
 - `HEADERSIZE` — number of lines in the header (optional)
 
 #### Example
